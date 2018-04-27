@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title></title>
+		<style>
+			body { margin: 0; height: 100%; overflow: hidden}
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+
+        <div id='newWindow'></div>
+
+        <script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
+        <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+        <script src="https://threejs.org/examples/js/libs/dat.gui.min.js"></script>
+		<script>
+
+            // INIT //
+
+            document.getElementById( 'newWindow' ).href += window.location.hash;
+
+			var gui = new dat.GUI();
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+			camera.position.x = 3;
+			camera.position.y = 2;
+
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x000000, 1 );
+
+			p1 = new THREE.Plane(new THREE.Vector3( 0, 1, 0 ), 1.2);
+			p2 = new THREE.Plane(new THREE.Vector3( 0, -1, 0 ), 1.2);
+			p3 = new THREE.Plane(new THREE.Vector3( 1, 0, 0 ), 1.2);
+			p4 = new THREE.Plane(new THREE.Vector3( -1, 0, 0 ), 1.2);
+			p5 = new THREE.Plane(new THREE.Vector3( 0, 0, 1 ), 1.2);
+			p6 = new THREE.Plane(new THREE.Vector3( 0, 0, -1 ), 1.2);
+			renderer.clippingPlanes = [p1,p2,p3,p4,p5,p6];
+            document.body.appendChild( renderer.domElement );
+            
+            // ORBIT //
+
+            var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+            
+            // LIGHTS //
+
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+			lights[ 0 ].position.set( 0, 200, 0 );
+			lights[ 1 ].position.set( 100, 200, 100 );
+			lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+			scene.add( lights[ 0 ] );
+			scene.add( lights[ 1 ] );
+			scene.add( lights[ 2 ] );
+
+			// CONE //
+	
+			var cone_geometry = new THREE.ConeGeometry(
+				radius=1,
+				height=1,
+				radialSegments=50,
+				heightSegments=12,
+				openEnded=true 
+			);
+			var cone_material = new THREE.MeshPhongMaterial( {
+				color: '#1565C0', // blue 800
+				transparent: true,
+				opacity: 0.8,
+				side: THREE.DoubleSide,
+				flatShading: true
+			} );
+			var cone = new THREE.Mesh( cone_geometry, cone_material );
+			
+			// PLANE //
+
+			var plane_geometry = new THREE.PlaneGeometry(
+				width=2.5, 
+				height=3,
+				widthSegments=50,
+				heightSegments=60
+			);
+			var plane_material = new THREE.MeshPhongMaterial( {
+				color: '#424242', // gray 800
+				transparent: true,
+				opacity: 0.8,
+				side: THREE.DoubleSide,
+				flatShading: true
+			} );
+			var plane = new THREE.Mesh( plane_geometry, plane_material );
+
+			// CONE AND PLANE WIRE //
+			var wire_material = new THREE.LineBasicMaterial( {
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.5
+			} );
+
+			cone.add( new THREE.LineSegments(new THREE.WireframeGeometry(cone_geometry), wire_material) );
+			plane.add( new THREE.LineSegments(new THREE.WireframeGeometry(plane_geometry), wire_material) );
+
+			// DOUBLE CONE //
+			up_cone = cone.clone();
+			up_cone.rotation.x = Math.PI;
+
+			cone.position.y = -0.5;
+			up_cone.position.y = 0.5;
+
+			// CONIC AND INTERACTIVITY //
+
+			planeData = {
+				y: 0.3,
+				theta: Math.PI/6
+			};
+
+			var conic_path = new THREE.Curve();
+
+			conic_path.getPoint = function ( alpha ) {
+			
+				var t = planeData.y/(1-Math.sin(2*Math.PI*alpha)*Math.tan(-planeData.theta));
+				var tx = t * Math.cos(2*Math.PI*alpha);
+				var ty = t;
+				var tz = t * Math.sin(2*Math.PI*alpha);
+			
+				return new THREE.Vector3( tx, ty, tz )
+			
+			};
+
+			var conic_geometry = new THREE.TubeGeometry(
+				path=conic_path,
+				tubularSegments=64,
+				radius=0.01,
+				radialSegments=32
+			);
+
+
+			var conic_material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+			var conic = new THREE.Mesh( conic_geometry, conic_material );
+
+            function updatePlane() {
+    
+                plane.position.y = planeData.y;
+				plane.rotation.x = Math.PI/2 + planeData.theta;
+
+				conic_path.getPoint = function ( alpha ) {
+			
+					var t = planeData.y/(1-Math.sin(2*Math.PI*alpha)*Math.tan(-planeData.theta));
+					var tx = t * Math.cos(2*Math.PI*alpha);
+					var ty = t;
+					var tz = t * Math.sin(2*Math.PI*alpha);
+				
+					return new THREE.Vector3( tx, ty, tz )
+				
+				};
+
+				conic_geometry = new THREE.TubeGeometry(
+					path=conic_path,
+					tubularSegments=64,
+					radius=0.01,
+					radialSegments=32
+					);
+				conic.geometry = conic_geometry;
+    
+			}
+
+			updatePlane();
+			
+			// GUI //
+			
+			gui.add( planeData, 'y', -1, 1 ).onChange( updatePlane );
+            gui.add( planeData, 'theta', -Math.PI/2, Math.PI/2 ).onChange( updatePlane );
+			
+			// END //
+
+			scene.add( cone );
+			scene.add( up_cone );
+			scene.add( plane );
+			scene.add( conic );
+
+			
+			var render = function () {
+
+				requestAnimationFrame( render );
+
+				renderer.render( scene, camera );
+
+			};
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+		</script>
+	</body>
+</html>
