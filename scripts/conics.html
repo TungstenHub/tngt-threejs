@@ -10,16 +10,16 @@
 	</head>
 	<body>
 
-        <div id='newWindow'></div>
+		<div id='newWindow'></div>
 
-        <script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
-        <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-        <script src="https://threejs.org/examples/js/libs/dat.gui.min.js"></script>
+		<script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://threejs.org/examples/js/libs/dat.gui.min.js"></script>
 		<script>
 
-            // INIT //
+			// INIT //
 
-            document.getElementById( 'newWindow' ).href += window.location.hash;
+			document.getElementById( 'newWindow' ).href += window.location.hash;
 
 			var gui = new dat.GUI();
 			var scene = new THREE.Scene();
@@ -39,13 +39,13 @@
 			p5 = new THREE.Plane(new THREE.Vector3( 0, 0, 1 ), 1.2);
 			p6 = new THREE.Plane(new THREE.Vector3( 0, 0, -1 ), 1.2);
 			renderer.clippingPlanes = [p1,p2,p3,p4,p5,p6];
-            document.body.appendChild( renderer.domElement );
-            
-            // ORBIT //
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
 
-            var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-            
-            // LIGHTS //
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
 
 			var lights = [];
 			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
@@ -143,9 +143,9 @@
 			var conic_material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 			var conic = new THREE.Mesh( conic_geometry, conic_material );
 
-            function updatePlane() {
-    
-                plane.position.y = planeData.y;
+			function updatePlane() {
+				
+				plane.position.y = planeData.y;
 				plane.rotation.x = Math.PI/2 + planeData.theta;
 
 				conic_path.getPoint = function ( alpha ) {
@@ -166,7 +166,7 @@
 					radialSegments=32
 					);
 				conic.geometry = conic_geometry;
-    
+				
 			}
 
 			updatePlane();
@@ -174,7 +174,7 @@
 			// GUI //
 			
 			gui.add( planeData, 'y', -1, 1 ).onChange( updatePlane );
-            gui.add( planeData, 'theta', -Math.PI/2, Math.PI/2 ).onChange( updatePlane );
+			gui.add( planeData, 'theta', -Math.PI/2, Math.PI/2 ).onChange( updatePlane );
 			
 			// END //
 

@@ -10,15 +10,15 @@
 	</head>
 	<body>
 
-        <div id='newWindow'></div>
+		<div id='newWindow'></div>
 
-        <script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
-        <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 		<script>
 
-            // INIT //
+			// INIT //
 
-            document.getElementById( 'newWindow' ).href += window.location.hash;
+			document.getElementById( 'newWindow' ).href += window.location.hash;
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 0.1, 50 );
@@ -28,13 +28,13 @@
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			renderer.setClearColor( 0x000000, 1 );
-            document.body.appendChild( renderer.domElement );
-            
-            // ORBIT //
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
 
-            var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-            
-            // LIGHTS //
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
 
 			var lights = [];
 			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );

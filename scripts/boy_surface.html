@@ -10,15 +10,15 @@
 	</head>
 	<body>
 
-        <div id='newWindow'></div>
+		<div id='newWindow'></div>
 
-        <script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
-        <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://rawgithub.com/mrdoob/three.js/dev/build/three.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 		<script>
 
-            // INIT //
+			// INIT //
 
-            document.getElementById( 'newWindow' ).href += window.location.hash;
+			document.getElementById( 'newWindow' ).href += window.location.hash;
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
@@ -28,13 +28,13 @@
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			renderer.setClearColor( 0x000000, 1 );
-            document.body.appendChild( renderer.domElement );
-            
-            // ORBIT //
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
 
-            var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-            
-            // LIGHTS //
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
 
 			var lights = [];
 			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
@@ -58,18 +58,19 @@
 			// https://en.wikipedia.org/wiki/Boy%27s_surface#Parametrization_of_Boy's_surface
 			//
 			// SAGE CODE
-			//	 var('u v')
-			//	 assume(u,'real')
-			//	 assume(v,'real')
-			//	 w = u*exp(I*v)
 			//
-			//	 g1 = -3/2*(w*(1-w**4)/(w**6+sqrt(5)*w**3-1)).imag()
-			//	 g2 = -3/2*(w*(1+w**4)/(w**6+sqrt(5)*w**3-1)).real()
-			//	 g3 = ((1+w**6)/(w**6+sqrt(5)*w**3-1)).imag()-1/2
+			// var('u v')
+			// assume(u,'real')
+			// assume(v,'real')
+			// w = u*exp(I*v)
 			//
-			//	 print(g1.reduce_trig())
-			//	 print(g2.reduce_trig())
-			//	 print(g3.reduce_trig())
+			// g1 = -3/2*(w*(1-w**4)/(w**6+sqrt(5)*w**3-1)).imag()
+			// g2 = -3/2*(w*(1+w**4)/(w**6+sqrt(5)*w**3-1)).real()
+			// g3 = ((1+w**6)/(w**6+sqrt(5)*w**3-1)).imag()-1/2
+			//
+			// print(g1.reduce_trig())
+			// print(g2.reduce_trig())
+			// print(g3.reduce_trig())
 
 			sq5 = Math.sqrt(5);
 			param = function ( v, u, optionalTarget ) {
