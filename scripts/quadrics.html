@@ -103,7 +103,7 @@
 					var y = 8*(j-res/2)/res;
 					var z = 8*(k-res/2)/res;
 
-					quadric.field[ i + j*res + k*res*res ] = i+j-40//quadValue(quadricData,x,y,z);
+					quadric.field[ i + j*res + k*res*res ] = quadValue(quadricData,x,y,z);
 
 					}
 				}
