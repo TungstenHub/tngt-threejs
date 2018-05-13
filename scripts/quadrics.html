@@ -127,7 +127,9 @@
 			}
 
 			// GUI //
-			gui.add({ sphere:function(){ 
+
+			var special_quadrics = gui.addFolder( 'Special Quadrics' );
+			special_quadrics.add({ sphere:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
 				quadricData.a33 = 1;
@@ -139,17 +141,129 @@
 				quadricData.a3 = 0;
 				quadricData.a = -1;
 				updateQuadric(); }},'sphere');
+			special_quadrics.add({ elliptic_paraboloid:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 1;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 1;
+				quadricData.a = 0;
+				updateQuadric(); }},'elliptic_paraboloid');
+			special_quadrics.add({ hyperbolic_paraboloid:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = -1;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 1;
+				quadricData.a = 0;
+				updateQuadric(); }},'hyperbolic_paraboloid');
+			special_quadrics.add({ elliptic_hyperboloid_one_sheet:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 1;
+				quadricData.a33 = -1;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = -1;
+				updateQuadric(); }},'elliptic_hyperboloid_one_sheet');
+			special_quadrics.add({ elliptic_hyperboloid_two_sheets:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 1;
+				quadricData.a33 = -1;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = 1;
+				updateQuadric(); }},'elliptic_hyperboloid_two_sheets');
+			special_quadrics.add({ cone:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 1;
+				quadricData.a33 = -1;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = 0;
+				updateQuadric(); }},'cone');
+			special_quadrics.add({ elliptical_cylinder:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 1;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = 1;
+				updateQuadric(); }},'elliptical_cylinder');
+			special_quadrics.add({ hyperbolic_cylinder:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = -1;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = 1;
+				updateQuadric(); }},'hyperbolic_cylinder');
+			special_quadrics.add({ parabolic_cylinder:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = 0;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = -1;
+				quadricData.a3 = 0;
+				quadricData.a = 0;
+				updateQuadric(); }},'parabolic_cylinder');
+			special_quadrics.add({ two_planes:function(){ 
+				quadricData.a11 = 1;
+				quadricData.a22 = -1;
+				quadricData.a33 = 0;
+				quadricData.a12 = 0;
+				quadricData.a13 = 0;
+				quadricData.a23 = 0;
+				quadricData.a1 = 0;
+				quadricData.a2 = 0;
+				quadricData.a3 = 0;
+				quadricData.a = 0;
+				updateQuadric(); }},'two_planes');
+			special_quadrics.open();
+			
 
-			gui.add( quadricData, 'a11', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a22', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a33', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a12', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a13', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a23', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a1', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a2', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a3', -5, 5 ).onChange( updateQuadric );
-			gui.add( quadricData, 'a', -5, 5 ).onChange( updateQuadric );
+			var parameters = gui.addFolder( 'Parameters' );
+			parameters.add( quadricData, 'a11', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a22', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a33', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a12', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a13', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a23', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a1', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a2', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a3', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.add( quadricData, 'a', -5, 5 ).listen().onChange( updateQuadric );
+			parameters.open();
 			
 			// END //
 
