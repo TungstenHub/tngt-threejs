@@ -22,7 +22,7 @@
 
 			document.getElementById( 'newWindow' ).href += window.location.hash;
 
-			var gui = new dat.GUI();
+			var gui = new dat.GUI({ width: 300 });
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
 			camera.position.z = -3;
@@ -140,7 +140,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = -1;
-				updateQuadric(); }},'sphere');
+				updateQuadric(); }},'sphere').name("Sphere");
 			special_quadrics.add({ elliptic_paraboloid:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
@@ -152,7 +152,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = -1;
 				quadricData.a = 0;
-				updateQuadric(); }},'elliptic_paraboloid');
+				updateQuadric(); }},'elliptic_paraboloid').name("Elliptic Paraboloid");
 			special_quadrics.add({ hyperbolic_paraboloid:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = -1;
@@ -164,7 +164,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = -1;
 				quadricData.a = 0;
-				updateQuadric(); }},'hyperbolic_paraboloid');
+				updateQuadric(); }},'hyperbolic_paraboloid').name("Hyperbolic Paraboloid");
 			special_quadrics.add({ elliptic_hyperboloid_one_sheet:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
@@ -176,7 +176,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = -1;
-				updateQuadric(); }},'elliptic_hyperboloid_one_sheet');
+				updateQuadric(); }},'elliptic_hyperboloid_one_sheet').name("Hyperboloid 1 Sheet");
 			special_quadrics.add({ elliptic_hyperboloid_two_sheets:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
@@ -188,7 +188,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = 1;
-				updateQuadric(); }},'elliptic_hyperboloid_two_sheets');
+				updateQuadric(); }},'elliptic_hyperboloid_two_sheets').name("Hyperboloid 2 Sheets");
 			special_quadrics.add({ cone:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
@@ -200,7 +200,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = 0;
-				updateQuadric(); }},'cone');
+				updateQuadric(); }},'cone').name("Cone");
 			special_quadrics.add({ elliptical_cylinder:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 1;
@@ -212,7 +212,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = -1;
-				updateQuadric(); }},'elliptical_cylinder');
+				updateQuadric(); }},'elliptical_cylinder').name("Elliptical Cylinder");
 			special_quadrics.add({ hyperbolic_cylinder:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = -1;
@@ -224,7 +224,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = 1;
-				updateQuadric(); }},'hyperbolic_cylinder');
+				updateQuadric(); }},'hyperbolic_cylinder').name("Hyperbolic Cylinder");
 			special_quadrics.add({ parabolic_cylinder:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 0;
@@ -236,7 +236,7 @@
 				quadricData.a2 = -1;
 				quadricData.a3 = 0;
 				quadricData.a = 0;
-				updateQuadric(); }},'parabolic_cylinder');
+				updateQuadric(); }},'parabolic_cylinder').name("Parabolic Cylinder");
 			special_quadrics.add({ two_crossing_planes:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = -1;
@@ -248,7 +248,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = 0;
-				updateQuadric(); }},'two_crossing_planes');
+				updateQuadric(); }},'two_crossing_planes').name("Two Crossing Planes");
 			special_quadrics.add({ two_parallel_planes:function(){ 
 				quadricData.a11 = 1;
 				quadricData.a22 = 0;
@@ -260,7 +260,7 @@
 				quadricData.a2 = 0;
 				quadricData.a3 = 0;
 				quadricData.a = -1;
-				updateQuadric(); }},'two_parallel_planes');
+				updateQuadric(); }},'two_parallel_planes').name("Two Parallel Planes");
 			special_quadrics.open();
 			
 
