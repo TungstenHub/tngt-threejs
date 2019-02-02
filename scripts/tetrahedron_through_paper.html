@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title></title>
+		<style>
+			body { margin: 0; height: 100%; overflow: hidden}
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+
+		<div id='newWindow'></div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/92/three.min.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js"></script>
+		<script>
+
+			// INIT //
+
+			document.getElementById( 'newWindow' ).href += window.location.hash;
+
+			var gui = new dat.GUI();
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+			camera.position.x = 1.5;
+			camera.position.z = -3;
+
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x000000, 1 );
+
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
+
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
+
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+			lights[ 0 ].position.set( 0, 200, 0 );
+			lights[ 1 ].position.set( 100, 200, 100 );
+			lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+			scene.add( lights[ 0 ] );
+			scene.add( lights[ 1 ] );
+			scene.add( lights[ 2 ] );
+
+			// TETRAHEDRON //
+
+			cylinder = function (p, q, thickness, material) {
+				var A = new THREE.Vector3( ...p);
+                var B = new THREE.Vector3( ...q);
+                var vec = B.clone(); vec.sub(A);
+                var h = vec.length();
+                vec.normalize();
+                var quaternion = new THREE.Quaternion();
+                quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), vec);
+                var geometry = new THREE.CylinderGeometry(thickness, thickness, h, 32);
+                geometry.translate(0, h / 2, 0);
+                var cylinder = new THREE.Mesh(geometry, material);
+                cylinder.applyQuaternion(quaternion);
+                cylinder.position.set(A.x, A.y, A.z);
+				return cylinder
+			}
+
+			const a = [ 1,  1/Math.sqrt(2),  0];
+			const b = [-1,  1/Math.sqrt(2),  0];
+			const c = [ 0, -1/Math.sqrt(2),  1];
+			const d = [ 0, -1/Math.sqrt(2), -1];
+
+			const tetr_lines = [
+				[a, b], 
+				[a, c], 
+				[a, d], 
+				[b, c], 
+				[b, d], 
+				[c, d], 
+			]
+
+			const tetr_thickness = 0.02;
+
+			var tetr_material = new THREE.MeshPhongMaterial( { color: '#FFFFFF' } );
+
+			var tetrahedron = new THREE.Group();
+
+			for (vertex of [a,b,c,d]) {
+				let sph = new THREE.SphereGeometry( tetr_thickness, 16, 16 );
+				sph = new THREE.Mesh( sph, tetr_material )
+				sph.position.set(vertex[0], vertex[1], vertex[2]);
+                tetrahedron.add( sph );
+            }
+
+            for (line of tetr_lines) {
+                tetrahedron.add( cylinder(line[0], line[1], tetr_thickness, tetr_material) );
+            }
+
+			scene.add( tetrahedron );
+			
+			// PLANE //
+
+			var plane_geometry = new THREE.PlaneGeometry(
+				width=3, 
+				height=3,
+				widthSegments=60,
+				heightSegments=60
+			);
+			var plane_material = new THREE.MeshPhongMaterial( {
+				color: '#424242', // gray 800
+				transparent: true,
+				opacity: 0.8,
+				side: THREE.DoubleSide,
+				flatShading: true
+			} );
+			var plane = new THREE.Mesh( plane_geometry, plane_material );
+
+			var wire_material = new THREE.LineBasicMaterial( {
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.5
+			} );
+
+			plane.add( new THREE.LineSegments(new THREE.WireframeGeometry(plane_geometry), wire_material) );
+
+			scene.add( plane );
+
+			// CUTS //
+
+			const cut_material = new THREE.MeshBasicMaterial( { color: '#03A9F4' } );
+
+			const cut_thickness = 0.05;
+
+            scene.add( cylinder([-1.2,1/Math.sqrt(2),0], [1.2,1/Math.sqrt(2),0], tetr_thickness, cut_material) );
+			scene.add( cylinder([0,1/Math.sqrt(2),0], [0,-1/Math.sqrt(2)-0.2,0], tetr_thickness, cut_material) );
+
+			// INTERACTIVITY //
+
+			positionData = {
+				a: -2
+			};
+
+			function updateTetrahedron() {
+				tetrahedron.position.set(0,Math.sqrt(2)*Math.abs(positionData.a),-positionData.a);
+			}
+
+			updateTetrahedron();
+			
+			// GUI //
+			
+			gui.add( positionData, 'a', -2, 2 ).onChange( updateTetrahedron );
+			
+			// END //
+			
+			var render = function () {
+
+				requestAnimationFrame( render );
+
+				renderer.render( scene, camera );
+
+			};
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+		</script>
+	</body>
+</html>
