@@ -105,7 +105,7 @@
 					var curve = new THREE.CatmullRomCurve3( 
                         knot.data.map(x => new THREE.Vector3(...x).multiplyScalar(0.07)), 
                         true);
-                    var geometry = new THREE.TubeGeometry(curve, 128, 0.07, 8, false );
+                    var geometry = new THREE.TubeGeometry(curve, 128, 0.07, 8, true );
 					var material = new THREE.MeshStandardMaterial( {
 						color: new THREE.Color().setHSL( Math.random(), 1, 0.75 ),
 						roughness: 0.5,
