@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title></title>
+		<style>
+			body { margin: 0; height: 100%; overflow: hidden}
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+
+		<div id='newWindow'></div>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/107/three.min.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js"></script>
+		<script>
+
+			// INIT //
+
+			document.getElementById( 'newWindow' ).href += window.location.hash;
+
+			var gui = new dat.GUI();
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 0.1, 100 );
+			camera.position.z = 40;
+			camera.position.y = 25;
+
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x000000, 1 );
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
+
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
+
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+			lights[ 0 ].position.set( 0, 200, 0 );
+			lights[ 1 ].position.set( 100, 200, 100 );
+			lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+			var light = new THREE.AmbientLight( 0x404040 ); 
+
+			scene.add( light );
+			scene.add( lights[ 0 ] );
+			scene.add( lights[ 1 ] );
+			scene.add( lights[ 2 ] );
+
+			// CUBE //
+
+			const n = 14;
+
+			const cylinder = function (A, B, thickness, material) {
+				var vec = B.clone(); vec.sub(A);
+				var h = vec.length();
+				vec.normalize();
+				var quaternion = new THREE.Quaternion();
+				quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), vec);
+				var geometry = new THREE.CylinderGeometry(thickness, thickness, h, 8);
+				geometry.translate(0, h / 2, 0);
+				var cylinder = new THREE.Mesh(geometry, material);
+				cylinder.applyQuaternion(quaternion);
+				cylinder.position.set(A.x, A.y, A.z);
+				return cylinder;
+			};
+
+			var cubeData = {
+        verts: [
+          [ 1/Math.sqrt(3),  1/Math.sqrt(3),  1/Math.sqrt(3)],
+          [ 1/Math.sqrt(3),  1/Math.sqrt(3), -1/Math.sqrt(3)],
+          [ 1/Math.sqrt(3), -1/Math.sqrt(3),  1/Math.sqrt(3)],
+          [ 1/Math.sqrt(3), -1/Math.sqrt(3), -1/Math.sqrt(3)],
+          [-1/Math.sqrt(3),  1/Math.sqrt(3),  1/Math.sqrt(3)],
+          [-1/Math.sqrt(3),  1/Math.sqrt(3), -1/Math.sqrt(3)],
+          [-1/Math.sqrt(3), -1/Math.sqrt(3),  1/Math.sqrt(3)],
+          [-1/Math.sqrt(3), -1/Math.sqrt(3), -1/Math.sqrt(3)],
+        ],
+        edges: [
+          [0, 1], 
+          [2, 3], 
+          [4, 5], 
+          [6, 7], 
+          [0, 2], 
+          [1, 3],
+          [4, 6], 
+          [5, 7],
+          [0, 4], 
+          [1, 5],
+          [2, 6], 
+          [3, 7],
+        ],
+        faces: [
+          [0, 1, 2],
+          [3, 2, 1],
+          [4, 5, 6],
+          [7, 6, 5],
+          [0, 4, 2],
+          [6, 2, 4],
+          [1, 5, 3],
+          [7, 3, 5],
+          [0, 1, 4],
+          [5, 4, 1],
+          [2, 3, 6],
+          [7, 6, 3]
+        ]
+      };
+
+			let colors = [
+				0xE91E63, // pink 500
+				0x2196F3, // blue 500
+				0xFFEB3B, // yellow 500
+			];
+
+			const innGeometry = new THREE.Geometry();
+
+			for (let v of cubeData.verts) {
+				innGeometry.vertices.push( new THREE.Vector3(...v) );
+			}
+
+			for (let f of cubeData.faces) {
+				innGeometry.faces.push( new THREE.Face3( ...f ));
+			}
+
+			for ( var i = 0; i < innGeometry.faces.length; i ++ ) {
+				innGeometry.faces[ i ].color.setHex( colors[Math.floor(i/4)] );
+			}
+
+			var innMaterial = new THREE.MeshPhongMaterial( {
+				color: 0xffffff,
+				vertexColors: THREE.FaceColors,
+				side: THREE.DoubleSide,
+				flatShading: true
+			} );
+    
+			const extThickness = 0.03;
+			const extMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+			const totalCube = new THREE.Group();
+			for (let vertex of innGeometry.vertices) {
+				let sph = new THREE.SphereGeometry( extThickness, 8, 8 );
+				sph = new THREE.Mesh( sph, extMaterial );
+				sph.position.set(vertex.x, vertex.y, vertex.z);
+				totalCube.add( sph );
+			}
+
+			const edgesCoords = cubeData.edges.map(
+				e => [innGeometry.vertices[e[0]],innGeometry.vertices[e[1]]]);
+
+			for (let ec of edgesCoords) {
+				totalCube.add( cylinder(ec[0], ec[1], extThickness, extMaterial) );
+			}
+
+			totalCube.add(new THREE.Mesh( innGeometry, innMaterial ));
+
+			var cubes = [];
+			for (let k=0; k<=n; k++) {
+				cubes.push(totalCube.clone()
+					.translateX(1.5*(k-n/2)))
+			}
+
+			// ROTATION PARAMETER //
+
+			opts = {
+				a: 0,
+				auto: true
+			};
+
+			function updateCubes() {
+				// The resulting quaternion comes from rotating Z pole
+				// around an axis between Z and X axes
+				for (let k=0; k<=n; k++) {
+					const A = 2*Math.PI*opts.a;
+					const B = Math.PI*(n-k)/(2*n);
+					const cA = Math.cos(A);
+					const sA = Math.sin(A);
+					const cB = Math.cos(B);
+					const sB = Math.sin(B);
+					cubes[k].setRotationFromQuaternion(new THREE.Quaternion().set( 
+						sB * cB * (1-cA), 
+						- sA * sB, 
+						1 - sB * sB * (1-cA), 
+						0 ));
+				}
+
+			}
+
+			updateCubes();
+
+			// GUI //
+			
+			gui.add( opts, 'a', 0, 1 ).listen().onChange( updateCubes );
+			gui.add( opts, 'auto');
+			
+			// END //
+
+			for (cube of cubes) {scene.add( cube );}
+			
+			var render = function () {
+
+				requestAnimationFrame( render );
+
+				if (opts.auto) {
+					opts.a += 0.002 + (opts.a >= 1 ? -1 : 0);
+
+					updateCubes();
+				}
+
+				renderer.render( scene, camera );
+
+			};
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+		</script>
+	</body>
+</html>
