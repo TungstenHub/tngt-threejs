@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title></title>
+		<style>
+			body { margin: 0; height: 100%; overflow: hidden}
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+
+		<div id='newWindow'></div>
+
+		<script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
+		<script src="https://unpkg.com/three@0.123.0/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://unpkg.com/three@0.123.0/examples/js/libs/dat.gui.min.js"></script>
+		<script>
+
+			// INIT //
+
+			document.getElementById( 'newWindow' ).href += window.location.hash;
+
+			const expl = document.createElement('div');
+			expl.style.position = 'absolute';
+			expl.style.width = 100;
+			expl.style.height = 100;
+			expl.style.color = "white";
+			expl.style.fontFamily = "Source Code Pro";
+			expl.innerHTML = "";
+			expl.style.top = 20 + 'px';
+			expl.style.left = 20 + 'px';
+			document.body.appendChild(expl);
+
+			var gui = new dat.GUI();
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 50 );
+			camera.position.x = 2;
+			camera.position.y = 0.5;
+			camera.position.z = -0.2;
+
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.setClearColor( 0x000000, 1 );
+
+			document.body.appendChild( renderer.domElement );
+			
+			// ORBIT //
+
+			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+			
+			// LIGHTS //
+
+			var lights = [];
+			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+			lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+			lights[ 0 ].position.set( 0, 200, 0 );
+			lights[ 1 ].position.set( 100, 200, 100 );
+			lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+			const light = new THREE.AmbientLight( 0x404040 )
+
+			scene.add( lights[ 0 ] );
+			scene.add( lights[ 1 ] );
+			scene.add( lights[ 2 ] );
+			scene.add( light );
+
+			// SPHERE //
+
+			const geometry = new THREE.SphereBufferGeometry( 0.99, 50, 25, 0, Math.PI *2, -0.001, Math.PI + 0.002 );
+
+			const edges = new THREE.EdgesGeometry( geometry );
+
+			const sphere = new THREE.LineSegments( edges );
+			sphere.material.linewidth = 1;
+			sphere.material.opacity = 0.3;
+			sphere.material.transparent = true;
+
+			scene.add( sphere );
+
+			scene.add(
+				new THREE.Mesh( 
+					new THREE.SphereBufferGeometry( 0.005, 16, 16 ), 
+					new THREE.MeshBasicMaterial( { color: '#FFFFFF' } ) 
+				)
+			);
+
+			// ANGLE //
+
+			const angle = new THREE.PlaneBufferGeometry();
+			angle.translate(0.5,0.5,0);
+			angle.rotateY(Math.PI/2);
+			angle.scale(0.04, 0.04, 0.04);
+			angle.translate(1,0,0);
+
+			scene.add( new THREE.Mesh( 
+				angle, 
+				new THREE.MeshBasicMaterial( { color: '#FFFFFF' } ) 
+			));
+
+			// VERTICES //
+
+			class SphVertex {
+				constructor(a) {
+					this.vert = new THREE.Mesh( 
+						new THREE.SphereBufferGeometry( 0.013, 16, 16 ), 
+						new THREE.MeshBasicMaterial( { color: '#FFFFFF' } ) 
+					);
+					this.line = [];
+					for (let i = 0; i < 16; i++) {
+						this.line.push(
+							new THREE.Line( 
+								new THREE.BufferGeometry(), 
+								new THREE.LineBasicMaterial( { 
+									linewidth: 4, 
+									color: '#FFFFFF', 
+									transparent: true, 
+									opacity: (15-i)/16 
+								} ) 
+							)
+						);
+					}
+					this.set(a);
+				}
+
+				set(a) {
+					this.a = a;
+					
+					this.vert.position.x = this.a.x;
+					this.vert.position.y = this.a.y;
+					this.vert.position.z = this.a.z;
+					this.line.forEach((l,i) => {
+						l.geometry.dispose();
+						l.geometry = new THREE.BufferGeometry().setFromPoints([ 
+							this.a.clone().multiplyScalar( i/16 ),
+							this.a.clone().multiplyScalar( (i+1)/16 ),
+						]);
+					});
+				}
+
+				get position() {return this.a; }
+
+				in(scene) {
+					scene.add(this.vert);
+					scene.add(...this.line);
+				}
+			}
+
+			const A = new SphVertex(new THREE.Vector3(1,0,0));
+			const B = new SphVertex(new THREE.Vector3());
+			const C = new SphVertex(new THREE.Vector3());
+			A.in(scene);
+			B.in(scene);
+			C.in(scene);
+
+			// SIDES //
+
+			class SphSegment {
+				constructor(a, b, color) {
+					const seg_mat = new THREE.MeshPhongMaterial( { 
+						color,
+						side: THREE.DoubleSide
+					} );
+					const ang_mat = new THREE.MeshStandardMaterial( { 
+						color,
+						emissive: color,
+						emissiveIntensity: 0.5,
+						transparent: true,
+						opacity: 0.7,
+						side: THREE.DoubleSide
+					} );
+					this.seg = new THREE.Mesh(new THREE.BufferGeometry(), seg_mat);
+					this.ang = new THREE.Mesh(new THREE.BufferGeometry(), ang_mat);
+					this.set(a,b);
+				}
+
+				static seg(a,b) {
+
+					const curve = new THREE.Curve()
+
+					curve.getPoint = function ( alpha ) {
+						return new THREE.Vector3()
+							.addScaledVector(a, 1 - alpha)
+							.addScaledVector(b, alpha)
+							.normalize();
+					};
+
+					return new THREE.TubeBufferGeometry(curve, 64, 0.01, 16);
+				}
+
+				static ang(a,b) {
+
+					const func = (u,v,target) => 
+						target.set(0,0,0)
+							.addScaledVector(a, 1 - u)
+							.addScaledVector(b, u)
+							.normalize()
+							.multiplyScalar(0.4 * v - 0.001);
+
+					return new THREE.ParametricBufferGeometry( func, 16, 16 );
+				}
+
+				update() {
+					this.seg.geometry.dispose();
+					this.seg.geometry = SphSegment.seg(this.a, this.b);
+					this.ang.geometry.dispose();
+					this.ang.geometry = SphSegment.ang(this.a, this.b);
+				}
+
+				set(a,b) {
+					this.a = a;
+					this.b = b;
+					this.update();
+				}
+
+				in(scene) {
+					scene.add(this.seg);
+					scene.add(this.ang);
+				}
+			}
+
+			const a = new SphSegment(B.position,C.position, '#2196F3');
+			const b = new SphSegment(C.position,A.position, '#EF6C00');
+			const c = new SphSegment(A.position,B.position, '#AD1457');
+			a.in(scene);
+			b.in(scene);
+			c.in(scene);
+
+			// TRIANGLE //
+
+			class SphTriangle extends THREE.Mesh {
+				constructor(a, b, c, mat) {
+					super(new THREE.BufferGeometry(), mat);
+					this.set(a,b,c);
+				}
+
+				static of(a,b,c) {
+
+					const func = (u,v,target) => 
+						target.set(0,0,0)
+							.addScaledVector(a, (1-u)*(1-v))
+							.addScaledVector(b, u*(1-v))
+							.addScaledVector(c, v)
+							.normalize();
+
+					return new THREE.ParametricBufferGeometry( func, 128, 64 );
+				}
+
+				update() {
+					this.geometry.dispose();
+					this.geometry = SphTriangle.of(this.a, this.b, this.c);
+				}
+
+				set(a,b,c) {
+					this.a = a;
+					this.b = b;
+					this.c = c;
+					this.update();
+				}
+			}
+
+			const t = new SphTriangle(A.position,B.position,C.position, 
+			new THREE.MeshPhongMaterial( { 
+				color: '#FFFFFF',
+				side: THREE.DoubleSide 
+			} ));
+			scene.add(t);
+
+			// TEXT //
+
+			const loader = new THREE.FontLoader();
+			let font;
+			loader.load(
+				'../fonts/source_code_pro__medium.json',
+				f => {font = f; updateTriangle();}
+			);
+
+			const [a_text, b_text, c_text, t_text] = 
+				['#2196F3', '#EF6C00', '#AD1457', '#FFFFFF'].map(c =>
+					new THREE.Mesh(
+						new THREE.BufferGeometry(), 
+						new THREE.MeshStandardMaterial( { 
+							color: c,
+							emissive: c
+						} )
+					)
+				);
+
+			a_text.rotateY(Math.PI/2);
+
+			b_text.rotateY(Math.PI/2);
+			b_text.position.y = -0.1;
+
+			c_text.rotateY(Math.PI/2);
+			c_text.position.z = 0.4;
+			
+			scene.add(a_text, b_text, c_text);
+
+			// INTERACTIVITY //
+
+			data = {
+				b: 0.3,
+				c: 0.5
+			};
+
+			function updateTriangle() {
+
+				bv = new THREE.Vector3(Math.cos(data.b), 0, -Math.sin(data.b));
+				cv = new THREE.Vector3(Math.cos(data.c), Math.sin(data.c), 0);
+				
+				B.set(cv);
+				C.set(bv);
+
+				a.set(B.position, C.position);
+				b.set(C.position, A.position);
+				c.set(A.position, B.position);
+
+				t.set(A.position, B.position, C.position);
+
+				if (font) {
+
+					const a_ang = Math.acos(bv.dot(cv));
+					const mid = bv.clone().add(cv).multiplyScalar(0.5).normalize();
+
+					a_text.geometry.dispose();
+					a_text.geometry = new THREE.TextBufferGeometry( 'a = ' + a_ang.toFixed(2) + '°', {
+						font: font,
+						size: 0.05,
+						height: 0.005,
+						curveSegments: 4
+					} );
+					
+					a_text.position.x = mid.x * 1.05;
+					a_text.position.y = mid.y * 1.05;
+					a_text.position.z = mid.z * 1.05 - 0.05;
+
+					b_text.geometry.dispose();
+					b_text.geometry = new THREE.TextBufferGeometry( 'b = ' + data.b.toFixed(2) + '°', {
+						font: font,
+						size: 0.05,
+						height: 0.005,
+						curveSegments: 4
+					} );
+					
+					b_text.position.x = Math.cos(data.b / 2) * 1.05;
+					b_text.position.z = - Math.sin(data.b / 2) * 1.05 + 0.18;
+
+					c_text.geometry.dispose();
+					c_text.geometry = new THREE.TextBufferGeometry( 'c = ' + data.c.toFixed(2) + '°', {
+						font: font,
+						size: 0.05,
+						height: 0.005,
+						curveSegments: 4
+					} );
+					
+					c_text.position.x = Math.cos(data.c / 2) * 1.05;
+					c_text.position.y = Math.sin(data.c / 2) * 1.05;
+
+					expl.innerHTML = 
+					'cos(a) = ' + Math.cos(a_ang).toFixed(2) + '<br>' + 
+					'cos(b) = ' + Math.cos(data.b).toFixed(2) + '<br>' + 
+					'cos(c) = ' + Math.cos(data.c).toFixed(2) + '<br>' + 
+					'<b>cos(a) = cos(b)cos(c)</b>';
+
+				}
+				
+			}
+
+			updateTriangle();
+			
+			// GUI //
+			
+			gui.add( data, 'b', 0.001, Math.PI/2 ).onChange( updateTriangle );
+			gui.add( data, 'c', 0.001, Math.PI/2 ).onChange( updateTriangle );
+			
+			// END //
+			
+			var render = function () {
+
+				requestAnimationFrame( render );
+
+				renderer.render( scene, camera );
+
+			};
+
+			window.addEventListener( 'resize', function () {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}, false );
+
+			render();
+		</script>
+	</body>
+</html>
