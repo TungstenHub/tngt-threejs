@@ -295,7 +295,7 @@
 			b_text.position.y = -0.1;
 
 			c_text.rotateY(Math.PI/2);
-			c_text.position.z = 0.4;
+			c_text.position.z = 0.48;
 			
 			scene.add(a_text, b_text, c_text);
 
@@ -326,7 +326,7 @@
 					const mid = bv.clone().add(cv).multiplyScalar(0.5).normalize();
 
 					a_text.geometry.dispose();
-					a_text.geometry = new THREE.TextBufferGeometry( 'a = ' + a_ang.toFixed(2) + '°', {
+					a_text.geometry = new THREE.TextBufferGeometry( 'a = ' + (a_ang*180/Math.PI).toFixed(2) + '°', {
 						font: font,
 						size: 0.05,
 						height: 0.005,
@@ -338,7 +338,7 @@
 					a_text.position.z = mid.z * 1.05 - 0.05;
 
 					b_text.geometry.dispose();
-					b_text.geometry = new THREE.TextBufferGeometry( 'b = ' + data.b.toFixed(2) + '°', {
+					b_text.geometry = new THREE.TextBufferGeometry( 'b = ' + (data.b*180/Math.PI).toFixed(2) + '°', {
 						font: font,
 						size: 0.05,
 						height: 0.005,
@@ -346,10 +346,10 @@
 					} );
 					
 					b_text.position.x = Math.cos(data.b / 2) * 1.05;
-					b_text.position.z = - Math.sin(data.b / 2) * 1.05 + 0.18;
+					b_text.position.z = - Math.sin(data.b / 2) * 1.05 + 0.22;
 
 					c_text.geometry.dispose();
-					c_text.geometry = new THREE.TextBufferGeometry( 'c = ' + data.c.toFixed(2) + '°', {
+					c_text.geometry = new THREE.TextBufferGeometry( 'c = ' + (data.c*180/Math.PI).toFixed(2) + '°', {
 						font: font,
 						size: 0.05,
 						height: 0.005,
