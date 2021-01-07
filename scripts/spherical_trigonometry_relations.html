@@ -73,18 +73,18 @@
 
 			scene.add( sphBase, sphOrig );
 
-			// ANGLE //
+			// RIGHT ANGLE //
 
-			const angle = new THREE.PlaneBufferGeometry();
-			angle.translate(0.5,0.5,0);
-			angle.rotateY(Math.PI/2);
-			angle.scale(0.04, 0.04, 0.04);
-			angle.translate(1,0,0);
+			const angle_geom = new THREE.PlaneBufferGeometry();
+			angle_geom.translate(-0.5,0.5,0);
+			angle_geom.scale(0.04, 0.04, 0.04);
 
-			scene.add( new THREE.Mesh( 
-				angle, 
+			const angle = new THREE.Mesh( 
+				angle_geom, 
 				new THREE.MeshBasicMaterial( { color: '#FFFFFF' } ) 
-			));
+			);
+
+			scene.add( angle );
 
 			// VERTICES //
 
@@ -103,6 +103,11 @@
 			a.in(scene);
 			b.in(scene);
 			c.in(scene);
+
+			// ANGLE //
+
+			const alpha = new SphAngle(A.position,B.position,C.position, '#2196F3');
+			alpha.in(scene);
 
 			// TRIANGLE //
 
@@ -139,24 +144,24 @@
 			b_text.position.y = -0.1;
 
 			c_text.rotateY(Math.PI/2);
-			c_text.position.z = 0.48;
 			
 			scene.add(a_text, b_text, c_text);
 
 			// INTERACTIVITY //
 
 			data = {
-				b: 0.3,
-				c: 0.5
+				a: 0.3,
+				b: 0.5,
+				alpha: Math.tan(0.3)/Math.sin(0.5)
 			};
 
 			function updateTriangle() {
 
-				bv = new THREE.Vector3(Math.cos(data.b), 0, -Math.sin(data.b));
-				cv = new THREE.Vector3(Math.cos(data.c), Math.sin(data.c), 0);
+				cv = new THREE.Vector3(Math.cos(data.b), 0, -Math.sin(data.b));
+				bv = new THREE.Vector3(Math.cos(data.b)*Math.cos(data.a), Math.sin(data.a), -Math.sin(data.b)*Math.cos(data.a));
 				
-				B.set(cv);
-				C.set(bv);
+				B.set(bv);
+				C.set(cv);
 
 				a.set(B.position, C.position);
 				b.set(C.position, A.position);
@@ -164,22 +169,27 @@
 
 				t.set(A.position, B.position, C.position);
 
+				angle.position.x = cv.x;
+				angle.position.z = cv.z;
+				angle.rotation.y = Math.PI/2 + data.b;
+
+				alpha.set(A.position, B.position, C.position);
+
 				if (font) {
 
-					const a_ang = Math.acos(bv.dot(cv));
-					const mid = bv.clone().add(cv).multiplyScalar(0.5).normalize();
+					const a_mid = bv.clone().add(cv).multiplyScalar(0.5).normalize();
 
 					a_text.geometry.dispose();
-					a_text.geometry = new THREE.TextBufferGeometry( 'a = ' + (a_ang*180/Math.PI).toFixed(2) + '°', {
+					a_text.geometry = new THREE.TextBufferGeometry( 'a = ' + (data.a*180/Math.PI).toFixed(2) + '°', {
 						font: font,
 						size: 0.05,
 						height: 0.005,
 						curveSegments: 4
 					} );
 					
-					a_text.position.x = mid.x * 1.05;
-					a_text.position.y = mid.y * 1.05;
-					a_text.position.z = mid.z * 1.05 - 0.05;
+					a_text.position.x = a_mid.x * 1.05;
+					a_text.position.y = a_mid.y * 1.05;
+					a_text.position.z = a_mid.z * 1.05 - 0.05;
 
 					b_text.geometry.dispose();
 					b_text.geometry = new THREE.TextBufferGeometry( 'b = ' + (data.b*180/Math.PI).toFixed(2) + '°', {
@@ -192,22 +202,28 @@
 					b_text.position.x = Math.cos(data.b / 2) * 1.05;
 					b_text.position.z = - Math.sin(data.b / 2) * 1.05 + 0.22;
 
+					const c_ang = Math.acos(bv.x);
+					const c_mid = A.position.clone().add(bv).multiplyScalar(0.5).normalize();
+
 					c_text.geometry.dispose();
-					c_text.geometry = new THREE.TextBufferGeometry( 'c = ' + (data.c*180/Math.PI).toFixed(2) + '°', {
+					c_text.geometry = new THREE.TextBufferGeometry( 'c = ' + (c_ang*180/Math.PI).toFixed(2) + '°', {
 						font: font,
 						size: 0.05,
 						height: 0.005,
 						curveSegments: 4
 					} );
 					
-					c_text.position.x = Math.cos(data.c / 2) * 1.05;
-					c_text.position.y = Math.sin(data.c / 2) * 1.05;
+					c_text.position.x = c_mid.x * 1.05;
+					c_text.position.y = c_mid.y * 1.05;
+					c_text.position.z = c_mid.z * 1.05 + 0.48;
+
+					const alpha_v = Math.atan(data.alpha);
 
 					expl.innerHTML = 
-					'cos(a) = ' + Math.cos(a_ang).toFixed(2) + '<br>' + 
-					'cos(b) = ' + Math.cos(data.b).toFixed(2) + '<br>' + 
-					'cos(c) = ' + Math.cos(data.c).toFixed(2) + '<br>' + 
-					'<b>cos(a) = cos(b)cos(c)</b>';
+					'α = ' + alpha_v.toFixed(2) + '<br>' + 
+					'<b>sin(α) = sin(a) / sin(c)</b> = ' + Math.sin(data.a).toFixed(2) + ' / ' + Math.sin(c_ang).toFixed(2) + ' = ' + Math.sin(alpha_v).toFixed(2) + '<br>' + 
+					'<b>cos(α) = tan(b) / tan(c)</b> = ' + Math.tan(data.b).toFixed(2) + ' / ' + Math.tan(c_ang).toFixed(2) + ' = ' + Math.cos(alpha_v).toFixed(2) + '<br>' +  
+					'<b>tan(α) = tan(a) / sin(b)</b> = ' + Math.tan(data.a).toFixed(2) + ' / ' + Math.sin(data.b).toFixed(2) + ' = ' + Math.tan(alpha_v).toFixed(2);
 
 				}
 				
@@ -217,8 +233,18 @@
 			
 			// GUI //
 			
-			gui.add( data, 'b', 0.001, Math.PI/2 ).onChange( updateTriangle );
-			gui.add( data, 'c', 0.001, Math.PI/2 ).onChange( updateTriangle );
+			gui.add( data, 'a', 0.001, Math.PI/2 - 0.01 ).listen().onChange( updateA );
+			gui.add( data, 'b', 0.001, Math.PI/2 - 0.01 ).onChange( updateB );
+
+			function updateA() {
+				data.alpha = Math.tan(data.a)/Math.sin(data.b);
+				updateTriangle();
+			}
+
+			function updateB() {
+				data.a = Math.atan(data.alpha*Math.sin(data.b));
+				updateTriangle();
+			}
 			
 			// END //
 			
