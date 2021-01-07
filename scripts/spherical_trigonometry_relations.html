@@ -220,7 +220,7 @@
 					const alpha_v = Math.atan(data.alpha);
 
 					expl.innerHTML = 
-					'α = ' + alpha_v.toFixed(2) + '<br>' + 
+					'α = ' + (alpha_v*180/Math.PI).toFixed(2) + '°<br>' + 
 					'<b>sin(α) = sin(a) / sin(c)</b> = ' + Math.sin(data.a).toFixed(2) + ' / ' + Math.sin(c_ang).toFixed(2) + ' = ' + Math.sin(alpha_v).toFixed(2) + '<br>' + 
 					'<b>cos(α) = tan(b) / tan(c)</b> = ' + Math.tan(data.b).toFixed(2) + ' / ' + Math.tan(c_ang).toFixed(2) + ' = ' + Math.cos(alpha_v).toFixed(2) + '<br>' +  
 					'<b>tan(α) = tan(a) / sin(b)</b> = ' + Math.tan(data.a).toFixed(2) + ' / ' + Math.sin(data.b).toFixed(2) + ' = ' + Math.tan(alpha_v).toFixed(2);
