@@ -144,10 +144,11 @@ class SphAngle {
     const cc = c.clone().cross(a).cross(a).normalize().multiplyScalar(-1);
     const func = (u,v,target) => 
       target.set(0,0,0)
+        .add(bb)
+        .lerp(cc, u)
+        .normalize()
+        .multiplyScalar(0.1 * v)
         .add(a)
-        .add(
-          bb.clone().lerp(cc, u).normalize().multiplyScalar(0.1 * v)
-        )
         .normalize()
         .multiplyScalar(1.001);
 
