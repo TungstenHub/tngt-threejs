@@ -127,8 +127,8 @@
 				f => {font = f; updateTriangle();}
 			);
 
-			const [a_text, b_text, c_text, t_text] = 
-				['#2196F3', '#EF6C00', '#AD1457', '#FFFFFF'].map(c =>
+			const [a_text, b_text, c_text] = 
+				['#2196F3', '#EF6C00', '#AD1457'].map(c =>
 					new THREE.Mesh(
 						new THREE.BufferGeometry(), 
 						new THREE.MeshStandardMaterial( { 
