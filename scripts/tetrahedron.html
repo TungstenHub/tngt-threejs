@@ -1,91 +1,103 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset=utf-8>
-		<title></title>
-		<style>
-			body { margin: 0; height: 100%; overflow: hidden}
-			canvas { width: 100%; height: 100% }
-		</style>
-	</head>
-	<body>
+  <head>
+    <meta charset=utf-8>
+    <title></title>
+    <style>
+      body { margin: 0; height: 100%; overflow: hidden}
+      canvas { width: 100%; height: 100% }
+    </style>
+  </head>
+  <body>
 
-		<div id='newWindow'></div>
+    <div id='newWindow'></div>
 
-		<script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
-		<script src="https://unpkg.com/three@0.123.0/examples/js/controls/OrbitControls.js"></script>
-		<script>
+    <script src="https://unpkg.com/three@0.123.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.123.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="../utils/regular_polyhedra.js"></script>
+    <script src="../utils/polyhedron.js"></script>
+    <script>
 
-			// INIT //
+      // INIT //
 
-			document.getElementById( 'newWindow' ).href += window.location.hash;
+      document.getElementById( 'newWindow' ).href += window.location.hash;
 
-			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 0.1, 50 );
-			camera.position.x = 10;
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera( 15, window.innerWidth / window.innerHeight, 0.1, 50 );
+      camera.position.x = 10;
 
-			var renderer = new THREE.WebGLRenderer( { antialias: true } );
-			renderer.setPixelRatio( window.devicePixelRatio );
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			renderer.setClearColor( 0x000000, 1 );
-			document.body.appendChild( renderer.domElement );
-			
-			// ORBIT //
+      var renderer = new THREE.WebGLRenderer( { antialias: true } );
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.setClearColor( 0x000000, 1 );
+      document.body.appendChild( renderer.domElement );
+      
+      // ORBIT //
 
-			var orbit = new THREE.OrbitControls( camera, renderer.domElement );
-			
-			// LIGHTS //
+      var orbit = new THREE.OrbitControls( camera, renderer.domElement );
+      
+      // LIGHTS //
 
-			var lights = [];
-			lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-			lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
-			lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+      var lights = [];
+      lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+      lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+      lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
 
-			lights[ 0 ].position.set( 0, 200, 0 );
-			lights[ 1 ].position.set( 100, 200, 100 );
-			lights[ 2 ].position.set( - 100, - 200, - 100 );
+      lights[ 0 ].position.set( 0, 200, 0 );
+      lights[ 1 ].position.set( 100, 200, 100 );
+      lights[ 2 ].position.set( - 100, - 200, - 100 );
 
-			var light = new THREE.AmbientLight( 0x404040 ); 
+      var light = new THREE.AmbientLight( 0x404040 ); 
 
-			scene.add( light );
-			scene.add( lights[ 0 ] );
-			scene.add( lights[ 1 ] );
-			scene.add( lights[ 2 ] );
+      scene.add( light );
+      scene.add( lights[ 0 ] );
+      scene.add( lights[ 1 ] );
+      scene.add( lights[ 2 ] );
 
-			// POLYHEDRON //
-	
-			var polyh_geometry = new THREE.TetrahedronGeometry();
-			var polyh_material = new THREE.MeshPhongMaterial( {
-				color: '#CDDC39', // lime 500
-				transparent: true,
-				opacity: 0.9,
-				side: THREE.DoubleSide,
-				flatShading: true
-			} );
-			var polyh = new THREE.Mesh( polyh_geometry, polyh_material );
-			
-			// END //
+      // POLYHEDRON //
 
-			scene.add( polyh );
-			
-			var render = function () {
+      const data = polyh_data.tetr;
 
-				requestAnimationFrame( render );
+      const inn_material = new THREE.MeshPhongMaterial( {
+        color: '#222222', 
+        transparent: true,
+        opacity: 0.9,
+        side: THREE.DoubleSide,
+        flatShading: true
+      } );
 
-				renderer.render( scene, camera );
+      const ext_material = new THREE.MeshPhongMaterial( { color: '#FFFFFF' } );
 
-			};
+      const ext_polyh = polyhedron(data, inn_material, ext_material);
+      
+      // END //
 
-			window.addEventListener( 'resize', function () {
+      const rot = [(Math.random()-0.5)*0.02,(Math.random()-0.5)*0.02,(Math.random()-0.5)*0.02];
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+      scene.add( ext_polyh );
+      
+      var render = function () {
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+        ext_polyh.rotation.x += rot[0];
+        ext_polyh.rotation.y += rot[1];
+        ext_polyh.rotation.z += rot[2];
 
-			}, false );
+        requestAnimationFrame( render );
 
-			render();
-		</script>
-	</body>
+        renderer.render( scene, camera );
+
+      };
+
+      window.addEventListener( 'resize', function () {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+      }, false );
+
+      render();
+    </script>
+  </body>
 </html>
