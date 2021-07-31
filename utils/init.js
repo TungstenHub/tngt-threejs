@@ -1,7 +1,7 @@
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.123.0';
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.123.0/examples/jsm/controls/OrbitControls.js';
-import { GUI } from 'https://cdn.skypack.dev/three@0.123.0/examples/jsm/libs/dat.gui.module.js';
+import * as THREE from 'https://cdn.skypack.dev/three@0.130.0';
+import { OrbitControls } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/controls/OrbitControls.js';
+import { GUI } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/libs/dat.gui.module.js';
 
 const init = (ident, ops = {}) => {
 
