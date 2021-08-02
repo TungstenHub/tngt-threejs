@@ -1,6 +1,6 @@
 import init from '../utils/init.js';
 
-import MarchingCubes from '../utils/marchingCubes.js';
+import MarchingCubes from '../utils/deps/marchingCubes.js';
 
 const {THREE, renderer, scene, camera, gui} = init('lp_norms', {
   gui: true,

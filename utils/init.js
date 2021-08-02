@@ -1,22 +1,25 @@
 
-import * as THREE from 'https://cdn.skypack.dev/three@0.130.0';
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/controls/OrbitControls.js';
-import { GUI } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/libs/dat.gui.module.js';
+import THREE from './deps/three.js';
+import OrbitControls from './deps/orbitControls.js';
+import GUI from './deps/datGUI.js';
 
 const init = (ident, ops = {}) => {
 
   const container = document.getElementById(`threejs__${ident}`);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera( 75, container.offsetWidth / container.offsetHeight, 0.1, 50 );
-  camera.position.z = -3;
+  const camera = new THREE.PerspectiveCamera( 
+    ops.cameraFov || 75, 
+    container.offsetWidth / container.offsetHeight, 
+    0.1, 50 
+  );
+  camera.position.set(...(ops.cameraPos || [0,0,-3]));
 
   const renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( container.offsetWidth, container.offsetHeight );
   renderer.setClearColor( 0x000000, 1 );
   renderer.domElement.style.position = 'absolute';
-
 
   window.addEventListener( 'resize', function () {
     camera.aspect = container.offsetWidth / container.offsetHeight;

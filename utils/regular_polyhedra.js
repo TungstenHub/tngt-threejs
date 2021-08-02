@@ -260,3 +260,7 @@ const polyh_data = {
     ],
   }
 };
+
+export {
+  polyh_data
+}
