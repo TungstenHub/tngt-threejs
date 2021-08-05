@@ -72,16 +72,15 @@
 			var material = new THREE.MeshPhongMaterial( {
 				color: '#2196F3', 
 				side: THREE.DoubleSide,
-				flatShading: true
 			} );
 
 			var wire = new THREE.Mesh( singleGeometry, material );
 
-      const sph_geom = new THREE.SphereGeometry( 0.99, 64, 64 );
+      const sph_geom = new THREE.SphereGeometry( 0.999, 64, 64 );
       const sph_mat = new THREE.MeshPhongMaterial( {
-        color: '#2196F3', 
+        color: '#222222', 
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.9,
       } );
       const sphere = new THREE.Mesh( sph_geom, sph_mat );
 			
