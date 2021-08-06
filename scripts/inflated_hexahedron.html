@@ -70,7 +70,7 @@
 			}
 
 			var material = new THREE.MeshPhongMaterial( {
-				color: '#2196F3', 
+				color: '#222222', 
 				side: THREE.DoubleSide,
 			} );
 
@@ -78,9 +78,9 @@
 
       const sph_geom = new THREE.SphereGeometry( 0.999, 64, 64 );
       const sph_mat = new THREE.MeshPhongMaterial( {
-        color: '#222222', 
+        color: '#2196F3', 
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.7,
       } );
       const sphere = new THREE.Mesh( sph_geom, sph_mat );
 			
