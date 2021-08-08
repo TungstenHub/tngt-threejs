@@ -1,3 +1,5 @@
+import THREE from './deps/three.js';
+
 const spherical_strip = (a,b, width = 0.1) => new THREE.ParametricGeometry(
   ( v, u, optionalTarget ) => {
 
@@ -15,3 +17,7 @@ const spherical_strip = (a,b, width = 0.1) => new THREE.ParametricGeometry(
       .addScaledVector(c,v);
 
   }, 8, 50 )
+
+export {
+  spherical_strip
+}

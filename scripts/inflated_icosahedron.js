@@ -1,14 +1,14 @@
 import init from '../utils/init.js';
 
 import {polyh_data} from '../utils/regular_polyhedra.js';
-import {polyhedron} from '../utils/polyhedron.js';
+import {spherical_strip} from '../utils/spherical_strip.js';
 
-const {THREE, renderer, scene, camera} = init('icosahedron', {
+const {THREE, renderer, scene, camera} = init('inflated_icosahedron', {
   orbitControls: true,
   cameraFov: 15,
   cameraPos: [10,0,0]
 });
-
+			
 // LIGHTS //
 
 var lights = [];
@@ -27,33 +27,46 @@ scene.add( lights[ 0 ] );
 scene.add( lights[ 1 ] );
 scene.add( lights[ 2 ] );
 
-// POLYHEDRON //
+// OBJECT //
+
+var wire = new THREE.Group();
 
 const data = polyh_data.icos;
 
-const inn_material = new THREE.MeshPhongMaterial( {
-  color: '#071007', 
-  transparent: true,
-  opacity: 0.9,
+var wire_mat = new THREE.MeshPhongMaterial( {
+  color: '#222222', 
   side: THREE.DoubleSide,
-  flatShading: true
 } );
 
-const ext_material = new THREE.MeshPhongMaterial( { color: '#4CAF50' } );
+for (let e of data.edges) {
+  wire.add(new THREE.Mesh(
+    spherical_strip(
+      new THREE.Vector3(...data.verts[e[0]]),
+      new THREE.Vector3(...data.verts[e[1]])
+    ), wire_mat )
+  );
+}
 
-const ext_polyh = polyhedron(data, inn_material, ext_material);
+const sph_geom = new THREE.SphereGeometry( 0.999, 64, 64 );
+const sph_mat = new THREE.MeshPhongMaterial( {
+  color: '#4CAF50', 
+  transparent: true,
+  opacity: 0.7,
+} );
+const sphere = new THREE.Mesh( sph_geom, sph_mat );
 
 // END //
 
 const rot = [(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005];
 
-scene.add( ext_polyh );
+scene.add( wire );
+scene.add( sphere );
 
 var render = function () {
 
-  ext_polyh.rotation.x += rot[0];
-  ext_polyh.rotation.y += rot[1];
-  ext_polyh.rotation.z += rot[2];
+  wire.rotation.x += rot[0];
+  wire.rotation.y += rot[1];
+  wire.rotation.z += rot[2];
 
   requestAnimationFrame( render );
 
