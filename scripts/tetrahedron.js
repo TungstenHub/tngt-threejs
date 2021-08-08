@@ -45,7 +45,7 @@ const ext_polyh = polyhedron(data, inn_material, ext_material);
 
 // END //
 
-const rot = [(Math.random()-0.5)*0.02,(Math.random()-0.5)*0.02,(Math.random()-0.5)*0.02];
+const rot = [(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005];
 
 scene.add( ext_polyh );
 
