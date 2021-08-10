@@ -41,6 +41,21 @@ const init = (ident, ops = {}) => {
     container.appendChild( gui.domElement );
   }
 
+  let text;
+  if (ops.text) {
+    text = document.createElement('div');
+    text.style.position = 'absolute';
+    text.style.width = 100;
+    text.style.height = 100;
+    text.style.color = "white";
+    text.style.fontFamily = "Source Code Pro";
+    text.style.fontSize = 24 + 'px';
+    text.innerHTML = "";
+    text.style.top = 20 + 'px';
+    text.style.left = 20 + 'px';
+    container.appendChild( text );
+  }
+
   return {
     THREE,
     renderer,
@@ -48,6 +63,7 @@ const init = (ident, ops = {}) => {
     camera,
     orbit,
     gui,
+    text,
   }
 }
 
