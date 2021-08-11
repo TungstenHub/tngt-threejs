@@ -11,9 +11,11 @@ const init = (ident, ops = {}) => {
   const camera = new THREE.PerspectiveCamera( 
     ops.cameraFov || 75, 
     container.offsetWidth / container.offsetHeight, 
-    0.1, 50 
+    0.1, 
+    ops.cameraFar || 50 
   );
   camera.position.set(...(ops.cameraPos || [0,0,-3]));
+  if (ops.cameraUp) camera.up.set( ...ops.cameraUp );
 
   const renderer = new THREE.WebGLRenderer( { antialias: true } );
   renderer.setPixelRatio( window.devicePixelRatio );
