@@ -1,3 +1,5 @@
+import THREE from './deps/three.js';
+
 const _sphBase = () => {
   const geometry = new THREE.SphereBufferGeometry( 0.99, 50, 25, 0, Math.PI *2, -0.001, Math.PI + 0.002 );
   const edges = new THREE.EdgesGeometry( geometry );
@@ -201,4 +203,13 @@ class SphTriangle extends THREE.Mesh {
     this.c = c;
     this.update();
   }
+}
+
+export {
+  sphBase,
+  sphOrig,
+  SphVertex,
+  SphSegment,
+  SphAngle,
+  SphTriangle,
 }
