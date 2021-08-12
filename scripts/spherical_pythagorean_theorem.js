@@ -1,5 +1,7 @@
 import init from '../utils/init.js';
 
+import baseUrl from '../assets/provider.js';
+
 import {
 	sphBase,
   sphOrig,
@@ -86,7 +88,7 @@ scene.add(t);
 const loader = new THREE.FontLoader();
 let font;
 loader.load(
-	'../fonts/source_code_pro__medium.json',
+	baseUrl + '/fonts/source_code_pro__medium.json',
 	f => {font = f; updateTriangle();}
 );
 
