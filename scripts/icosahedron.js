@@ -1,6 +1,6 @@
 import init from '../utils/init.js';
 
-import {polyh_data} from '../utils/regular_polyhedra.js';
+import {polyhData} from '../utils/regular_polyhedra.js';
 import {polyhedron} from '../utils/polyhedron.js';
 
 const {THREE, renderer, scene, camera} = init('icosahedron', {
@@ -29,9 +29,9 @@ scene.add( lights[ 2 ] );
 
 // POLYHEDRON //
 
-const data = polyh_data.icos;
+const data = polyhData.icos;
 
-const inn_material = new THREE.MeshPhongMaterial( {
+const innMaterial = new THREE.MeshPhongMaterial( {
   color: '#071007', 
   transparent: true,
   opacity: 0.9,
@@ -39,21 +39,21 @@ const inn_material = new THREE.MeshPhongMaterial( {
   flatShading: true
 } );
 
-const ext_material = new THREE.MeshPhongMaterial( { color: '#4CAF50' } );
+const extMaterial = new THREE.MeshPhongMaterial( { color: '#4CAF50' } );
 
-const ext_polyh = polyhedron(data, inn_material, ext_material);
+const extPolyh = polyhedron(data, innMaterial, extMaterial);
 
 // END //
 
 const rot = [(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005,(Math.random()-0.5)*0.005];
 
-scene.add( ext_polyh );
+scene.add( extPolyh );
 
 var render = function () {
 
-  ext_polyh.rotation.x += rot[0];
-  ext_polyh.rotation.y += rot[1];
-  ext_polyh.rotation.z += rot[2];
+  extPolyh.rotation.x += rot[0];
+  extPolyh.rotation.y += rot[1];
+  extPolyh.rotation.z += rot[2];
 
   requestAnimationFrame( render );
 

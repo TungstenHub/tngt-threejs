@@ -2,7 +2,7 @@ import init from '../utils/init.js';
 
 import MarchingCubes from '../utils/deps/marchingCubes.js';
 
-import { polyh_data } from '../utils/regular_polyhedra.js';
+import { polyhData } from '../utils/regular_polyhedra.js';
 import { cylinder } from '../utils/cylinder.js';
 
 const {THREE, renderer, scene, camera} = init('clebsch_cubic', {
@@ -34,7 +34,7 @@ scene.add( lights[ 2 ] );
 
 const clipPlanes = [];
 
-for (let col of [polyh_data.icos.verts, polyh_data.dodec.verts]) {
+for (let col of [polyhData.icos.verts, polyhData.dodec.verts]) {
 	for (let v of col) {
 		clipPlanes.push(new THREE.Plane( new THREE.Vector3( ...v ), 9 ));
 	}

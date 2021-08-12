@@ -1,6 +1,6 @@
 import init from '../utils/init.js';
 
-import {polyh_data} from '../utils/regular_polyhedra.js';
+import {polyhData} from '../utils/regular_polyhedra.js';
 import {spherical_strip} from '../utils/spherical_strip.js';
 
 const {THREE, renderer, scene, camera} = init('inflated_octahedron', {
@@ -31,7 +31,7 @@ scene.add( lights[ 2 ] );
 
 var wire = new THREE.Group();
 
-const data = polyh_data.oct;
+const data = polyhData.oct;
 
 var wire_mat = new THREE.MeshPhongMaterial( {
   color: '#222222', 

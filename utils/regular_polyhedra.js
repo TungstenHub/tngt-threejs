@@ -1,4 +1,4 @@
-const polyh_data = {
+const polyhData = {
   tetr: {
     verts: [
       [ 1/Math.sqrt(3),  1/Math.sqrt(3),  1/Math.sqrt(3)],
@@ -262,5 +262,5 @@ const polyh_data = {
 };
 
 export {
-  polyh_data
+  polyhData
 }
