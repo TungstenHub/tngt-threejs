@@ -9,17 +9,12 @@ import {
   SphTriangle,
 } from '../utils/spherical_geometry.js';
 
-const {THREE, renderer, scene, camera, gui, text: expl} = init('girard_theorem', {
+const {THREE, renderer, scene, camera, gui} = init('girard_theorem', {
   orbitControls: true,
 	gui: true,
 	guiWidth: 200,
-	text: true,
   cameraPos: [1.8,0.2,0.6]
 });
-
-expl.style.fontSize = 18 + 'px';
-expl.style.bottom = expl.style.top;
-expl.style.top = 'initial';
 			
 // LIGHTS //
 
@@ -178,9 +173,9 @@ updateTriangle();
 
 // GUI //
 
-gui.add( data, 'a', 0.1, Math.PI/2 - 0.1 ).onChange( updateTriangle );
-gui.add( data, 'b', 0.1, Math.PI/2 - 0.1 ).onChange( updateTriangle );
-gui.add( data, 'c', 0.1, Math.PI/2 - 0.1 ).onChange( updateTriangle );
+gui.add( data, 'a', 0.15, Math.PI/2 - 0.1 ).onChange( updateTriangle );
+gui.add( data, 'b', 0.15, Math.PI/2 - 0.1 ).onChange( updateTriangle );
+gui.add( data, 'c', 0.15, Math.PI/2 - 0.1 ).onChange( updateTriangle );
 gui.add( data, 'T' ).onChange( updateVisibility(t,   'T') );
 gui.add( data, 'A' ).onChange( updateVisibility(t_a, 'A') );
 gui.add( data, 'B' ).onChange( updateVisibility(t_b, 'B') );
