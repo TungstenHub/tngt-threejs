@@ -38,7 +38,10 @@ const init = (ident, ops = {}) => {
 
   let gui;
   if (ops.gui) {
-    gui = new GUI({ autoPlace: false });
+    gui = new GUI({ 
+      autoPlace: false, 
+      ...(ops.guiWidth && { width: ops.guiWidth }) 
+    });
     gui.domElement.style.position = 'relative';
     container.appendChild( gui.domElement );
   }

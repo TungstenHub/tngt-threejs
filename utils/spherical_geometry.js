@@ -64,21 +64,23 @@ class SphVertex {
 }
 
 class SphSegment {
-  constructor(a, b, color) {
+  constructor(a, b, color, angle=true) {
     const seg_mat = new THREE.MeshPhongMaterial( { 
       color,
       side: THREE.DoubleSide
     } );
-    const ang_mat = new THREE.MeshStandardMaterial( { 
-      color,
-      emissive: color,
-      emissiveIntensity: 0.5,
-      transparent: true,
-      opacity: 0.7,
-      side: THREE.DoubleSide
-    } );
     this.seg = new THREE.Mesh(new THREE.BufferGeometry(), seg_mat);
-    this.ang = new THREE.Mesh(new THREE.BufferGeometry(), ang_mat);
+    if (angle) {
+      const ang_mat = new THREE.MeshStandardMaterial( { 
+        color,
+        emissive: color,
+        emissiveIntensity: 0.5,
+        transparent: true,
+        opacity: 0.7,
+        side: THREE.DoubleSide
+      } );
+      this.ang = new THREE.Mesh(new THREE.BufferGeometry(), ang_mat);
+    }
     this.set(a,b);
   }
 
@@ -111,8 +113,10 @@ class SphSegment {
   update() {
     this.seg.geometry.dispose();
     this.seg.geometry = SphSegment.seg(this.a, this.b);
-    this.ang.geometry.dispose();
-    this.ang.geometry = SphSegment.ang(this.a, this.b);
+    if (this.ang) {
+      this.ang.geometry.dispose();
+      this.ang.geometry = SphSegment.ang(this.a, this.b);
+    }
   }
 
   set(a,b) {
@@ -123,7 +127,7 @@ class SphSegment {
 
   in(scene) {
     scene.add(this.seg);
-    scene.add(this.ang);
+    if (this.ang) scene.add(this.ang);
   }
 }
 
