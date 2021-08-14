@@ -9,12 +9,17 @@ import {
   SphTriangle,
 } from '../utils/spherical_geometry.js';
 
-const {THREE, renderer, scene, camera, gui} = init('girard_theorem', {
+const {THREE, renderer, scene, camera, gui, text: expl} = init('girard_theorem', {
   orbitControls: true,
 	gui: true,
 	guiWidth: 200,
+	text: true,
   cameraPos: [1.8,0.2,0.6]
 });
+
+expl.style.fontSize = 18 + 'px';
+expl.style.bottom = expl.style.top;
+expl.style.top = 'initial';
 			
 // LIGHTS //
 
@@ -123,6 +128,12 @@ const data = {
 	'C \'': false,
 };
 
+const angleFrom = (a,b,c) => {
+	const u = a.clone().cross(b).normalize();
+	const v = a.clone().cross(c).normalize();
+	return Math.acos(u.dot(v));
+}
+
 const updateTriangle = () => {
 
 	const av = new THREE.Vector3(Math.cos(data.a), Math.sin(data.a), 0);
@@ -162,6 +173,17 @@ const updateTriangle = () => {
 	alpha.set(A.position, B.position, C.position);
 	beta.set(B.position, C.position, A.position);
 	gamma.set(C.position, A.position, B.position);
+
+	const ang_a = angleFrom(av,bv,cv);
+	const ang_b = angleFrom(bv,cv,av);
+	const ang_c = angleFrom(cv,av,bv);
+
+	expl.innerHTML = 
+	'α = ' + ang_a.toFixed(2) + '<br>' + 
+	'β = ' + ang_b.toFixed(2) + '<br>' + 
+	'γ = ' + ang_c.toFixed(2) + '<br>' + 
+	'<b>area(T) = α + β + γ - π = ' +
+	(ang_a+ang_b+ang_c-3.14).toFixed(2) + '</b>';
 	
 }
 
