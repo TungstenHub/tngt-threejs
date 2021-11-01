@@ -29,6 +29,8 @@ const init = (ident, ops = {}) => {
     renderer.setSize( container.offsetWidth, container.offsetHeight );
   }, false );
 
+  renderer.domElement.id = `threejs__canvas__${ident}`;
+
   container.appendChild( renderer.domElement );
 
   let orbit;
