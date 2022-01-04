@@ -6,6 +6,11 @@ import GUI from './deps/datGUI.js';
 const init = (ident, ops = {}) => {
 
   const container = document.getElementById(`threejs__${ident}`);
+  let prevChild = container.lastElementChild; 
+  while (prevChild) {
+      container.removeChild(prevChild);
+      prevChild = container.lastElementChild;
+  }
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera( 
